@@ -1,7 +1,14 @@
 import re
-from app.services.gemini_service import run_prompt
+from app.services.groq_service import run_prompt
 
-WEIGHTS = {"relevance": 0.20, "completeness": 0.20, "accuracy": 0.20, "clarity": 0.15, "structure": 0.15, "conciseness": 0.10}
+WEIGHTS = {
+    "relevance": 0.20,
+    "completeness": 0.20,
+    "accuracy": 0.20,
+    "clarity": 0.15,
+    "structure": 0.15,
+    "conciseness": 0.10,
+}
 
 
 def score_response(prompt: str, response: str) -> dict:
@@ -39,7 +46,9 @@ def _parse(text: str) -> dict | None:
 
 def _heuristic(prompt: str, response: str) -> dict:
     words = len(response.split())
-    overlap = len(set(prompt.lower().split()) & set(response.lower().split())) / max(len(set(prompt.lower().split())), 1)
+    overlap = len(set(prompt.lower().split()) & set(response.lower().split())) / max(
+        len(set(prompt.lower().split())), 1
+    )
     scores = {
         "relevance": min(100, int(overlap * 140 + 45)),
         "completeness": 65,
@@ -54,4 +63,13 @@ def _heuristic(prompt: str, response: str) -> dict:
 
 
 def _zero() -> dict:
-    return {"relevance": 0, "completeness": 0, "accuracy": 0, "clarity": 0, "structure": 0, "conciseness": 0, "overall": 0, "verdict": "No response to evaluate"}
+    return {
+        "relevance": 0,
+        "completeness": 0,
+        "accuracy": 0,
+        "clarity": 0,
+        "structure": 0,
+        "conciseness": 0,
+        "overall": 0,
+        "verdict": "No response to evaluate",
+    }

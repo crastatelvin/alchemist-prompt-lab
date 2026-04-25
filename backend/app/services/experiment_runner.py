@@ -1,4 +1,4 @@
-from app.services.gemini_service import run_prompt
+from app.services.groq_service import run_prompt
 from app.services.prompt_scorer import score_response
 
 
@@ -22,5 +22,7 @@ async def run_ab_test(prompt_a: str, prompt_b: str, system_context: str, broadca
     score_b = score_response(prompt_b, result_b["output"])
     winner = "A" if score_a["overall"] >= score_b["overall"] else "B"
     margin = abs(score_a["overall"] - score_b["overall"])
-    await broadcast_fn({"step": "complete", "winner": winner, "message": f"Winner: {winner} (+{margin})"})
+    await broadcast_fn(
+        {"step": "complete", "winner": winner, "message": f"Winner: {winner} (+{margin})"}
+    )
     return result_a, score_a, result_b, score_b, winner, margin

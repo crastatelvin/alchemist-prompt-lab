@@ -1,4 +1,5 @@
 import json
+
 from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
 from slowapi import Limiter
@@ -17,6 +18,8 @@ from app.services.technique_library import get_all_techniques, get_technique
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 connections: list[WebSocket] = []
+db_dependency = Depends(get_db)
+api_key_dependency = Depends(require_api_key)
 
 
 async def broadcast(data: dict):
@@ -56,14 +59,35 @@ def ready():
 
 
 @router.post("/run")
-async def run_experiment(payload: RunRequest, db: Session = Depends(get_db), _: None = Depends(require_api_key)):
-    await broadcast({"event": "start", "mode": payload.mode, "message": f"Starting {payload.mode} run"})
+async def run_experiment(
+    payload: RunRequest,
+    db: Session = db_dependency,
+    _: None = api_key_dependency,
+):
+    await broadcast(
+        {"event": "start", "mode": payload.mode, "message": f"Starting {payload.mode} run"}
+    )
     if payload.mode == "ab" and payload.prompt_b:
-        result_a, score_a, result_b, score_b, winner, margin = await run_ab_test(payload.prompt_a, payload.prompt_b, payload.system_context, broadcast)
-        exp = save_experiment(db, "ab", payload.prompt_a, payload.prompt_b, winner, margin, result_a, score_a, result_b, score_b)
+        result_a, score_a, result_b, score_b, winner, margin = await run_ab_test(
+            payload.prompt_a, payload.prompt_b, payload.system_context, broadcast
+        )
+        exp = save_experiment(
+            db,
+            "ab",
+            payload.prompt_a,
+            payload.prompt_b,
+            winner,
+            margin,
+            result_a,
+            score_a,
+            result_b,
+            score_b,
+        )
     else:
         result_a, score_a = await run_single(payload.prompt_a, payload.system_context, broadcast)
-        exp = save_experiment(db, "single", payload.prompt_a, payload.prompt_b, None, None, result_a, score_a)
+        exp = save_experiment(
+            db, "single", payload.prompt_a, payload.prompt_b, None, None, result_a, score_a
+        )
 
     variants = {v.label: v for v in exp.variants}
     result = {
@@ -83,7 +107,11 @@ async def run_experiment(payload: RunRequest, db: Session = Depends(get_db), _: 
 
 
 @router.get("/experiments")
-def experiments(limit: int = Query(default=20, ge=1, le=100), db: Session = Depends(get_db), _: None = Depends(require_api_key)):
+def experiments(
+    limit: int = Query(default=20, ge=1, le=100),
+    db: Session = db_dependency,
+    _: None = api_key_dependency,
+):
     data = []
     for exp in list_experiments(db, limit):
         variants = {v.label: v for v in exp.variants}
@@ -107,17 +135,17 @@ def experiments(limit: int = Query(default=20, ge=1, le=100), db: Session = Depe
 
 
 @router.get("/stats")
-def stats(db: Session = Depends(get_db), _: None = Depends(require_api_key)):
+def stats(db: Session = db_dependency, _: None = api_key_dependency):
     return JSONResponse(get_stats(db))
 
 
 @router.get("/techniques")
-def techniques(_: None = Depends(require_api_key)):
+def techniques(_: None = api_key_dependency):
     return JSONResponse(get_all_techniques())
 
 
 @router.get("/techniques/{technique_id}")
-def technique_by_id(technique_id: str, _: None = Depends(require_api_key)):
+def technique_by_id(technique_id: str, _: None = api_key_dependency):
     t = get_technique(technique_id)
     if not t:
         return JSONResponse(status_code=404, content={"error": "Technique not found"})
@@ -127,7 +155,12 @@ def technique_by_id(technique_id: str, _: None = Depends(require_api_key)):
 def _variant_result(v: VariantResult | None):
     if not v:
         return None
-    return {"output": v.output, "latency_ms": v.latency_ms, "word_count": v.word_count, "char_count": v.char_count}
+    return {
+        "output": v.output,
+        "latency_ms": v.latency_ms,
+        "word_count": v.word_count,
+        "char_count": v.char_count,
+    }
 
 
 def _variant_score(v: VariantResult | None):

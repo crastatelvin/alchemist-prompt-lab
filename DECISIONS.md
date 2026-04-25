@@ -9,5 +9,8 @@ AI-generated rubric scores with deterministic heuristic fallback preserve availa
 ## API key and CORS hardening
 Even for portfolio environments, authenticated routes and allowlisted origins reduce accidental exposure.
 
+## Request ID logging
+Request correlation IDs are added via middleware and logged with each request to improve debugging and incident triage.
+
 ## Monorepo layout
 Backend/frontend/infra in one repository improves onboarding and CI cohesion.

@@ -14,7 +14,9 @@ class Experiment(Base):
     winner: Mapped[str | None] = mapped_column(String(2), nullable=True)
     margin: Mapped[float | None] = mapped_column(Float, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
-    variants: Mapped[list["VariantResult"]] = relationship(back_populates="experiment", cascade="all, delete-orphan")
+    variants: Mapped[list["VariantResult"]] = relationship(
+        back_populates="experiment", cascade="all, delete-orphan"
+    )
 
 
 class VariantResult(Base):

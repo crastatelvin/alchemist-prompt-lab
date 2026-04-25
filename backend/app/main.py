@@ -6,9 +6,11 @@ from starlette.responses import JSONResponse
 
 from app.api.routes import limiter, router
 from app.core.config import settings
+from app.core.logging_utils import RequestContextMiddleware, configure_logging
 from app.db.database import Base, engine
 
 Base.metadata.create_all(bind=engine)
+configure_logging()
 
 app = FastAPI(title=settings.app_name)
 app.state.limiter = limiter
@@ -20,6 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.add_middleware(SlowAPIMiddleware)
+app.add_middleware(RequestContextMiddleware)
 app.include_router(router)
 
 

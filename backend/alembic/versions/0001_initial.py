@@ -1,12 +1,12 @@
 """initial
 
 Revision ID: 0001_initial
-Revises: 
+Revises:
 Create Date: 2026-04-25
 """
-from alembic import op
-import sqlalchemy as sa
 
+import sqlalchemy as sa
+from alembic import op
 
 revision = "0001_initial"
 down_revision = None
@@ -28,7 +28,12 @@ def upgrade() -> None:
     op.create_table(
         "variant_results",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("experiment_id", sa.Integer(), sa.ForeignKey("experiments.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "experiment_id",
+            sa.Integer(),
+            sa.ForeignKey("experiments.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("label", sa.String(length=1), nullable=False),
         sa.Column("output", sa.Text(), nullable=False),
         sa.Column("latency_ms", sa.Float(), nullable=False),
