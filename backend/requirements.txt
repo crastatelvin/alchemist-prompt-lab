@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+google-genai
+python-dotenv
+pydantic
+sqlalchemy
+alembic
+httpx
+slowapi
+pytest
+pytest-asyncio
+ruff
+black
