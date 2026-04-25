@@ -1,15 +1,22 @@
 export default function AnalyticsDashboard({ stats }) {
+  const cards = [
+    { label: "Experiments", value: stats?.total || 0 },
+    { label: "Avg Score", value: stats?.avg_score || 0 },
+    { label: "Best Score", value: stats?.best_score || 0 },
+    { label: "Avg Latency", value: `${stats?.avg_latency || 0}ms` },
+  ];
+
   return (
-    <div className="card">
-      <strong>Analytics</strong>
-      <div className="row" style={{ marginTop: 8 }}>
-        <div className="card"><div className="muted">Experiments</div><div className="score">{stats?.total || 0}</div></div>
-        <div className="card"><div className="muted">Avg Score</div><div className="score">{stats?.avg_score || 0}</div></div>
+    <section className="glass-card">
+      <div className="panel-title">Analytics</div>
+      <div className="metric-grid">
+        {cards.map((card) => (
+          <div key={card.label} className="metric-card">
+            <div className="metric-label">{card.label}</div>
+            <div className="metric-value">{card.value}</div>
+          </div>
+        ))}
       </div>
-      <div className="row">
-        <div className="card"><div className="muted">Best Score</div><div className="score">{stats?.best_score || 0}</div></div>
-        <div className="card"><div className="muted">Avg Latency</div><div className="score">{stats?.avg_latency || 0}ms</div></div>
-      </div>
-    </div>
+    </section>
   );
 }

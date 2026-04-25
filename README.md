@@ -34,6 +34,7 @@ npm run dev
 - `APP_ENV`: `development` or `production`
 - `DB_URL`: SQLAlchemy URL (default SQLite)
 - `CORS_ORIGINS`: comma-separated allowlist
+  - Example: `http://localhost:5173,http://127.0.0.1:5173`
 
 ## Docker
 ```bash

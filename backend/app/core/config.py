@@ -13,7 +13,9 @@ class Settings:
     db_url: str = os.getenv("DB_URL", "sqlite:///./alchemist.db")
     cors_origins: list[str] = [
         origin.strip()
-        for origin in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+        for origin in os.getenv(
+            "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+        ).split(",")
         if origin.strip()
     ]
     request_limit_per_minute: str = "30/minute"

@@ -31,7 +31,8 @@ export default function useExperiment() {
     setError("");
     setResult(null);
     setWsLog([]);
-    const wsUrl = import.meta.env.VITE_WS_URL || "ws://localhost:8000/ws";
+    const browserHost = typeof window !== "undefined" ? window.location.hostname : "localhost";
+    const wsUrl = import.meta.env.VITE_WS_URL || `ws://${browserHost}:8000/ws`;
     const ws = new WebSocket(wsUrl);
     ws.onmessage = (event) => {
       try {

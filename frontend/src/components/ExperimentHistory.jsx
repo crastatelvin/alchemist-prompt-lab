@@ -1,16 +1,21 @@
 export default function ExperimentHistory({ experiments }) {
   return (
-    <div className="card">
-      <strong>History</strong>
-      <div style={{ display: "grid", gap: 8, marginTop: 8, maxHeight: 260, overflowY: "auto" }}>
+    <section className="glass-card">
+      <div className="panel-title">History</div>
+      <div className="history-list">
         {experiments.map((e) => (
-          <div key={e.id} className="card" style={{ marginBottom: 0 }}>
-            <div className="muted">{e.type}</div>
-            <div>{e.prompt_a?.slice(0, 90)}</div>
-            <div className="muted">A: {e.score_a?.overall || 0} {e.score_b ? `| B: ${e.score_b?.overall || 0}` : ""}</div>
+          <div key={e.id} className="history-item">
+            <div className="subtle" style={{ textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              {e.type === "ab_test" ? "A/B test" : "Single run"}
+            </div>
+            <div style={{ margin: "4px 0 8px", lineHeight: 1.45 }}>{e.prompt_a?.slice(0, 100)}</div>
+            <div className="subtle">
+              A: {e.score_a?.overall || 0}
+              {e.score_b ? ` | B: ${e.score_b?.overall || 0}` : ""}
+            </div>
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
