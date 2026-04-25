@@ -349,6 +349,6 @@ See [`DECISIONS.md`](./DECISIONS.md) for architecture rationale, including:
 
 This project is licensed under the MIT License. See [LICENSE](./LICENSE).
 
-                           Built by Telvin Crasta · Premium UX · Prompt intelligence
+                    Built by Telvin Crasta · Premium UX · Prompt intelligence
 
                  ⭐ If ALCHEMIST helped you improve prompts faster, star the repo.
